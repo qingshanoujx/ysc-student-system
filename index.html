@@ -21,6 +21,114 @@
 @media(max-width:1050px){.layout{grid-template-columns:1fr;height:auto}.header{align-items:flex-start;flex-direction:column}.brand img{max-width:320px}.paper{width:100%}}
 @media print{body{background:white}.header,.left,.toast{display:none!important}.layout{display:block;height:auto;padding:0}.panel{border:0;box-shadow:none}.preview{background:white;padding:0}.paper{box-shadow:none;margin:0 auto;page-break-after:always;border-top:8px solid var(--orange)}}
 
+/* ====== 手机适配 ====== */
+@media (max-width: 768px) {
+  /* 头部 */
+  .header { padding: 10px 12px; flex-direction: column; align-items: stretch; gap: 8px; position: relative; }
+  .brand { flex-wrap: wrap; }
+  .brand img { max-width: 200px; height: auto; }
+  .brand h1 { font-size: 17px; }
+  .brand p { font-size: 11px; }
+  .actions { flex-wrap: wrap; gap: 6px; }
+  .actions .btn { padding: 8px 12px; font-size: 13px; border-radius: 10px; }
+  
+  /* 布局 */
+  .layout { grid-template-columns: 1fr; height: auto; padding: 10px; gap: 10px; }
+  .panel { border-radius: 14px; }
+  .left { height: auto; max-height: none; }
+  .head { padding: 10px 12px; }
+  .head h2 { font-size: 17px; }
+  .scroll { padding: 10px 12px; }
+  
+  /* 表单 */
+  .grid2 { grid-template-columns: 1fr; gap: 8px; }
+  .grid3 { grid-template-columns: 1fr; gap: 8px; }
+  .field { margin-bottom: 8px; }
+  .field label { font-size: 12px; }
+  .field input, .field select, .field textarea { font-size: 14px; padding: 10px; border-radius: 10px; }
+  .section { font-size: 15px; margin: 14px 0 8px; }
+  .subhead { font-size: 13px; margin: 8px 0 4px; }
+  .tip { font-size: 12px; padding: 10px; }
+  .pills { gap: 5px; }
+  .pill { font-size: 12px; padding: 7px 10px; }
+  
+  /* 上传区 */
+  .upload { padding: 10px; font-size: 13px; }
+  
+  /* 底部按钮 */
+  .formbar { padding: 10px 12px; flex-wrap: wrap; }
+  .formbar .btn { flex: 1; min-width: 80px; padding: 10px; font-size: 14px; }
+  
+  /* 预览区 */
+  .preview { padding: 10px; }
+  .paper { width: 100%; padding: 14px 16px; border-top-width: 6px; }
+  .paper h2 { font-size: 20px; }
+  .paper h3 { font-size: 15px; margin: 16px 0 8px; }
+  .paper table { font-size: 12px; }
+  .paper td, .paper th { padding: 6px 8px; font-size: 12px; }
+  .paper td:first-child { width: 90px; font-size: 12px; }
+  .paper .sub { font-size: 12px; }
+  .paper ul { padding-left: 16px; }
+  .paper li { font-size: 13px; }
+  .focus, .warn { padding: 10px; font-size: 12px; }
+  .imggrid { grid-template-columns: 1fr; }
+  .attach img { max-height: 200px; }
+  .empty { margin: 40px auto; }
+  .empty div[style*="font-size"] { font-size: 40px !important; }
+  .empty h3 { font-size: 16px; }
+  .empty p { font-size: 13px; }
+  
+  /* 弹窗 */
+  .modalBox { width: 95% !important; padding: 14px; border-radius: 14px; max-height: 90vh; }
+  .modalTop h2 { font-size: 17px; }
+  
+  /* 收款码弹窗图片 */
+  #paymentModalBody img { width: 180px !important; height: 180px !important; }
+  
+  /* Toast */
+  .toast { right: 12px; bottom: 12px; padding: 10px 14px; font-size: 13px; left: 12px; text-align: center; }
+  
+  /* 登录页 */
+  .forceLoginCard { width: 100%; padding: 20px; margin: 0 12px; }
+  .forceLoginCard h2 { font-size: 20px; }
+  .forceLoginCard input { padding: 12px; font-size: 15px; }
+  
+  /* 用户管理 */
+  .userGrid { grid-template-columns: 1fr 1fr; }
+  
+  /* 文件列表 */
+  .filelist { gap: 6px; }
+  .fileitem { padding: 6px; }
+  .thumb { width: 36px; height: 36px; }
+  
+  /* 头像/logo区域 */
+  .brand-title p { font-size: 11px; }
+}
+
+/* 小屏手机 */
+@media (max-width: 420px) {
+  .header { padding: 8px 10px; }
+  .brand img { max-width: 160px; }
+  .brand h1 { font-size: 15px; }
+  .actions .btn { padding: 6px 10px; font-size: 12px; }
+  .layout { padding: 6px; gap: 6px; }
+  .section { font-size: 14px; }
+  .paper { padding: 10px 12px; }
+  .paper h2 { font-size: 17px; }
+  .paper td, .paper th { padding: 5px 6px; font-size: 11px; }
+  .paper td:first-child { width: 75px; font-size: 11px; }
+  .modalBox { padding: 10px; }
+  #paymentModalBody img { width: 150px !important; height: 150px !important; }
+}
+
+/* 横屏手机优化 */
+@media (max-width: 812px) and (orientation: landscape) {
+  .layout { grid-template-columns: 1fr 1fr; }
+  .left { max-height: 85vh; overflow-y: auto; }
+  .preview { max-height: 85vh; overflow-y: auto; }
+}
+
+
 
 /* 强制账号密码登录 */
 .forceLoginOverlay{position:fixed;inset:0;background:linear-gradient(180deg,#f7fcff,#eaf6fb);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px}
