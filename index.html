@@ -202,6 +202,18 @@ ${miss.length?`<div class="warn">待确认信息：${esc(miss.join('；'))}</div
 <h3>五、学管师确认栏</h3><table><tr><td>学生协议</td><td>□已收 □未收</td><td>学员信息表</td><td>□已收 □未收</td></tr><tr><td>首次联系</td><td>□已完成 □待完成</td><td>正式建档</td><td>□已完成 □待完成</td></tr><tr><td>首月任务</td><td>□已生成 □待生成</td><td>家长反馈</td><td>□已同步 □待同步</td></tr></table>
 </div>`;$('preview').innerHTML=html;toast('已生成');setTimeout(function(){showPaymentInfo(d.classType)},500)}
 function safeFileName(){const x=data();return `${x.name}_${x.school}_对接表`.replace(/[\\/:*?"<>|]/g,'_')}
+
+function $(id) { return document.getElementById(id); }
+function saveReportRecord(action) {
+  try {
+    var d = data();
+    var records = JSON.parse(localStorage.getItem('ysc_report_records') || '[]');
+    records.push({action: action, name: d.name, school: d.school, classType: d.classType, time: new Date().toISOString()});
+    if (records.length > 200) records = records.slice(-200);
+    localStorage.setItem('ysc_report_records', JSON.stringify(records));
+  } catch(e) { /* localStorage not available */ }
+}
+
 function downloadWord() {
   if (!$('paper')) generate();
   saveReportRecord('下载Word');
