@@ -370,88 +370,62 @@ function buildDocHtml(paperHtml) {
 
 
 
+
+
 function downloadWord() {
   try {
-    if (!document.getElementById('paper') && typeof generate === 'function') generate();
+    // Ensure paper exists
+    var paperEl = document.getElementById('paper');
+    if (!paperEl) {
+      if (typeof generate === 'function') generate();
+      paperEl = document.getElementById('paper');
+      if (!paperEl) { showToast('请先生成对接表'); return; }
+    }
     
-    // Read form data directly
-    var name = gv('name') || '学生';
-    var cls = gv('classType') || '';
-    var amount = gv('amount') || '';
-    var grade = gv('grade') || '';
-    var origin = gv('origin') || '';
-    var school = gv('school') || '';
-    var major = gv('major') || '';
-    var agreement = gv('agreement') || '';
-    var startDate = gv('startDate') || '';
-    var needs = gv('needs') || '';
-    var rank = gv('rankStatus') || '';
-    var weak = gv('weakSubject') || '';
-    var cet = gv('cetStatus') || '';
-    var judge = gv('judge') || '';
-    var note = gv('specialNote') || '';
-    var contactTime = gv('firstContactTime') || '';
+    // Get student name from form or paper
+    var name = '';
+    var nameEl = document.getElementById('name');
+    if (nameEl && nameEl.value) name = nameEl.value.trim();
+    if (!name) {
+      var firstTd = paperEl.querySelector('td');
+      if (firstTd) name = firstTd.textContent.trim();
+    }
+    name = name || '学生';
     
-    // Generate proper Word HTML format
+    // Get paper HTML content and clean it for Word export
+    var paperHtml = paperEl.innerHTML;
+    
+    // Generate proper Word HTML format with ALL paper content
     var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
     h += '<head><meta charset="utf-8">';
     h += '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->';
     h += '<style>';
-    h += 'body{font-family:Microsoft YaHei;padding:50px;line-height:1.6}';
-    h += 'h1{color:#f3981c;font-size:28px;text-align:center;margin-bottom:8px}';
-    h += '.date{color:#667085;font-size:14px;text-align:center;margin-bottom:30px}';
-    h += 'table{border-collapse:collapse;width:100%;margin:16px 0}';
-    h += 'td{border:1px solid #999;padding:8px 12px;vertical-align:top;font-size:14px}';
-    h += 'td:first-child{background:#fff4e5;font-weight:bold;width:130px}';
-    h += 'h3{color:#075985;border-left:5px solid #f3981c;padding-left:12px;margin:24px 0 10px;font-size:16px}';
-    h += '.label{color:#075985;font-weight:bold;font-size:14px;margin:14px 0 6px}';
-    h += 'ul{margin:6px 0 14px;padding-left:20px}';
-    h += 'li{margin:4px 0}';
-    h += '</style>';
-    h += '</head><body>';
+    h += 'body{font-family:Microsoft YaHei;padding:40px;line-height:1.6}';
+    h += 'table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}';
+    h += 'td,th{border:1px solid #999;padding:8px 10px;vertical-align:top}';
+    h += 'td:first-child{font-weight:bold;background:#fff4e5;width:130px}';
+    h += 'h2{margin:0;color:#f3981c;font-size:24px}';
+    h += 'h3{color:#075985;border-left:5px solid #f3981c;padding-left:12px;margin:20px 0 8px;font-size:16px}';
+    h += '.sub{color:#667085;font-size:13px;margin-bottom:18px}';
+    h += '.focus{background:#f0f9ff;border:1px solid #b9e6fe;padding:12px;margin:12px 0;line-height:1.7}';
+    h += '.warn{background:#fff8ed;border:1px solid #ffd8a8;padding:12px;margin:12px 0;color:#92400e}';
+    h += 'ul{margin:8px 0 14px;padding-left:20px}li{margin:4px 0}';
+    h += '.imggrid{display:flex;flex-wrap:wrap;gap:10px}';
+    h += '.attach{border:1px solid #d7e6f0;padding:8px;margin:4px}';
+    h += '.attach img{max-width:300px;max-height:200px}';
+    h += '.empty{text-align:center;color:#999;padding:20px}';
+    h += '</style></head><body>';
     
-    // Title
-    h += '<h1>易仕程学员对接表</h1>';
-    h += '<p class="date">生成时间：' + new Date().toLocaleString() + '</p>';
+    // Add the paper content directly
+    h += paperHtml;
     
-    // Summary
-    h += '<div style="background:#f0f9ff;border:1px solid #b9e6fe;border-radius:10px;padding:14px;margin-bottom:20px">';
-    h += '<strong style="color:#075985">' + e(name) + '</strong> - ' + e(cls) + ' - ' + e(school) + (major ? '/' + e(major) : '');
-    h += '</div>';
-    
-    // Info section
-    h += '<h3>一、基本信息</h3>';
-    h += '<table>';
-    h += trow('姓名', name) + trow('报名班型', cls);
-    h += trow('收费金额', amount) + trow('年级', grade);
-    h += trow('生源地', origin) + trow('本科学校', school);
-    h += trow('本科专业', major) + trow('协议签订', agreement);
-    h += trow('服务起始', startDate);
-    h += '</table>';
-    
-    // Direction section
-    h += '<h3>二、规划方向与当前状态</h3>';
-    h += '<table>';
-    h += trow('就业方向', needs) + trow('排名情况', rank);
-    h += trow('薄弱学科', weak) + trow('四六级', cet);
-    h += trow('首接建议时间', contactTime);
-    h += '</table>';
-    
-    // Assessment
-    h += '<h3>三、咨询判断</h3>';
-    h += '<div style="background:#fff8ed;border:1px solid #ffd8a8;border-radius:10px;padding:14px;color:#92400e">';
-    h += e(judge || '—');
-    if (note) h += '<br><br><strong>备注：</strong>' + e(note);
-    h += '</div>';
-    
-    // Footer
-    h += '<p style="text-align:center;color:#999;border-top:1px solid #eee;padding-top:16px;margin-top:30px;font-size:12px">';
+    h += '<p style="text-align:center;color:#999;border-top:1px solid #eee;padding-top:12px;margin-top:20px;font-size:11px">';
     h += '易仕程学员对接内部系统 - 自动生成</p>';
     h += '</body></html>';
     
-    // Create Blob with Word HTML content
+    // Create Blob
     var blob = new Blob(['\ufeff' + h], {type: 'application/msword'});
-    var name2 = name.replace(/[\\/:*?"<>|]/g, '_');
+    var fname = name.replace(/[\\/:*?"<>|]/g, '_') + '.doc';
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     
     if (isMobile) {
@@ -459,15 +433,15 @@ function downloadWord() {
       var w = window.open(url, '_blank');
       if (!w || w.closed) {
         var a = document.createElement('a');
-        a.href = url; a.download = name2 + '.doc';
+        a.href = url; a.download = fname;
         a.style.display = 'none'; document.body.appendChild(a); a.click();
         setTimeout(function(){a.remove();URL.revokeObjectURL(url);},3000);
       }
-      showToast('文件已生成，点击分享可保存');
+      showToast('文件已生成');
     } else {
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
-      a.href = url; a.download = name2 + '.doc';
+      a.href = url; a.download = fname;
       a.style.display = 'none'; document.body.appendChild(a); a.click();
       setTimeout(function(){a.remove();URL.revokeObjectURL(url);},3000);
     }
@@ -475,27 +449,6 @@ function downloadWord() {
     console.error(e);
     showToast('下载失败');
   }
-}
-
-function gv(id) {
-  var el = document.getElementById(id);
-  if (!el) return '';
-  var v = el.value || '';
-  if (el.tagName === 'SELECT' && !v) {
-    var opts = el.options;
-    for (var i = 0; i < opts.length; i++) {
-      if (opts[i].selected) return opts[i].text;
-    }
-  }
-  return v.trim();
-}
-
-function e(s) {
-  return String(s || '').replace(/[&<>"]/g,function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m];});
-}
-
-function trow(label, val) {
-  return '<tr><td>' + e(label) + '</td><td>' + e(val || '—') + '</td></tr>';
 }
 
 function downloadPDF() {
