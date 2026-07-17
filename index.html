@@ -200,7 +200,7 @@ ${miss.length?`<div class="warn">待确认信息：${esc(miss.join('；'))}</div
 <h3>三、学管师首接动作</h3>${li(firstActions(d))}
 <h3>四、附件材料</h3><p><b>已勾选：</b>${esc(line(d.fileChecks))}</p>${files.length?'<div class="imggrid">'+files.map(f=>`<div class="attach">${f.is?`<img src="${f.url}">`:'<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:50px;background:#f8fafc;border-radius:8px">📎</div>'}<b>${esc(f.name)}</b><small>${f.source}｜${size(f.size)}</small></div>`).join('')+'</div>':'<p>暂无上传附件。</p>'}
 <h3>五、学管师确认栏</h3><table><tr><td>学生协议</td><td>□已收 □未收</td><td>学员信息表</td><td>□已收 □未收</td></tr><tr><td>首次联系</td><td>□已完成 □待完成</td><td>正式建档</td><td>□已完成 □待完成</td></tr><tr><td>首月任务</td><td>□已生成 □待生成</td><td>家长反馈</td><td>□已同步 □待同步</td></tr></table>
-</div>`;$('preview').innerHTML=html;toast('已生成')}
+</div>`;$('preview').innerHTML=html;toast('已生成');setTimeout(function(){showPaymentInfo(d.classType)},500)}
 function safeFileName(){const x=data();return `${x.name}_${x.school}_对接表`.replace(/[\\/:*?"<>|]/g,'_')}
 function downloadWord(){if(!$('paper'))generate();saveReportRecord('下载Word');let content=`<html><head><meta charset="utf-8"><style>body{font-family:Microsoft YaHei}table{border-collapse:collapse;width:100%}td{border:1px solid #999;padding:8px;vertical-align:top}td:first-child{font-weight:bold;background:#fff4e5}h3{color:#075985}
 
@@ -321,6 +321,124 @@ function forceAddUser(){
   renderForceAccounts();
 }
 
+
+
+// ====== 协议签署机构 + 收款二维码 ======
+var PAYMENT_QR = {
+  "sx_ysc": {
+    name: '陕西易仕程教育科技有限公司',
+    taxId: '91610104MACWQPLYXY',
+    addr: '陕西省西安市雁塔区科技西路2825号绿地鸿海大厦B座20702室翔驰创业孵化器xc141',
+    account: '129918187810000',
+    bank: '招商银行（陕西自贸试验区西安高新科技支行）',
+    qr: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYgAAAGIAQAAAABzOEqLAAADg0lEQVR4nO1b0XLcMAgEJv//y3TELsh96fimtaqTURJHdsTkZAzLAlaXD4d9KiAtcX/YB2sxWuLJeyWeBuI8Gd9x0XEJl72Wtz7uD5NPxw9vuai4jrmKi7q66DiqS8y9VrV9PK4P0bjb6srbP6bQTOiIQ6GTto/7w/5GwnX6rjAVaCB+6T/6HzeHvds+OMIv6fBc40wHbIQerkYim+7DTtKHx3Q4qVLKcFpURYK5r/tU9loJucRXf/7C6PjqWX3ohQ8ixIKBBKjDaPwbnis7R0LDM2ngxWAeca46fjEIDt+lXLntPo6Q+EGoKx7BLmPasIi0kPirhDrCVvbch50joTK1gQNsJdAcPARLln6q90o4YQO4Qeimu4KriqNSI9vu4wgJAWhUpqqOuMYllc/yjq/W4IeA+yFzBVNBpMXcidNadn2u7Ch+7pXDIi8kJcR5eDRvfdgiPNdAh6EDYkVqI7mgBtrDSjZ9ruwcCWcgdUlW0U3RMiLPqEinbLyPs+ofjnxVTCLQquAqjEeKl+y5DztKQkcsG1YwK1NpL2k+Gmd77+P7JSQIB1lH8nIEuzigfiucd7z7vD7GwDQ1Q+ZRXirPvfO7q+pRDsSuClRmT4D2PO/4ak28qwiuMrFYFdqIf/mjsbzxYwHiOO1gpBER+DKWGmnGwT4KW6T5x5J8iVwL5ZFfBFFHppHms3VcYmflS5T0g7edxoC8CTLunux9z33YIRLKpCGzIXn/2RnHljislO6/WlQ/19AE8laVSpxNJuw6UZRJ9nyu7BAJTeNgVJv3nzpJVQlXdny1hA9KdlKTcCDiurZVS+Z6u596Rb+PAibSGpBQZAEkL0jjxxo8F2L27F0oPzbhRBPa9/S7dlr/rlZTz2xhYL9oVam88WMNnnv1XlVtcDISxlZO17bnc2XH4YckU78ACDsZJof3XfdhB/krHRPWA1GgpYYySQJg98bzVf1XwpvN6ke2XrEGVa8a+Bh7Pld2iITO7vXfAqt8/4Poopw0P3/eXylmaGXIlzmpKLQBEVE8fNaez5Ud+H6tJBOp+geirWoBkuYfS/iHThIefSbRIVeoke1ZAlPZ87myEyU0uxSZ0bq0tksle79gH2dI6NBAtCSyIsg3DGbmxP/Dp3pnPUqKAV5UkFWRapCTxo9lfFBSL9RBdjZMTqiNH0v5x1fbubXE7WH3l8rbJX4Bz3QLqtQGQXwAAAAASUVORK5CYII='
+  },
+  "xa_brand": {
+    name: '西安易仕程品牌运营管理有限公司',
+    taxId: '91610131MAKEU7KP06',
+    addr: '陕西省西安市高新区丈八一路1号汇鑫中心A座2402室',
+    account: '129921872110001',
+    bank: '招商银行（陕西自贸试验区西安高新科技支行）',
+    qr: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAagAAAGoAQAAAAA7yUxtAAAEC0lEQVR4nO1c0Y7jMAgEq///y3MCBuzdPemu+xAnLl5pm8ZBqjMFDwOpQn4xxm+MpK3W0XfjE+6GIB0M6wsgENicHfhbP+Dk/dc1DrV6JUQqEIVCoFBRg0ptzs6Iwt/klQ9Y1zgYL9F0KzWwHCA7pY6ZxgF0ufL+6xrnW6lDpAQF5mV2ZPioI7b9E74xPsFKHS7DyZBzf/LNa77s/oT/P46Oh4hj+J9HwcDHfM0czl0My5X3X9f4AH6If/6lyf3XNQ61eq2BDvlaZJAske6F56xrHGr1Cig87IlxelJ438RiuGupGgHxd4oHrGucawVVS7gkvSfooSfI5IdO6j0nM9DwkHUd61/ifELoOxX2wueCLCbf8My5/WsfXspgmHJGpsdxzkFyih8jieL9v4fjaCu43oTAzKIfE7GJYQbG8LqnrOs8K61YqHSfPAx2waCYftb51w3yL4TzIFQMmCzPrGxq9qQjfr7zr838UIyuC3VdSvWr6OFc3s4kcPePG+NgKzhiiGC4UAt3PXL5io1+3TPWdaKVeFEyBScwHC7vIhOLS2Km4+FuviHhXxohMRhHcg9OR+YVntb51/58WSPfmkVlG4Ee02ayRr/o/nFjHGwFi3S65luZiQUPyfJX4KmPWdehVqisWLiVWbGSZUvv52ASHdPNN/bnyyArhOOUKXTlyWvHTeu9u/FSFpS1aD0nSDECzYySeEzcONhK6VBg4EthPuWPbJ9KjfEp6zrYCkkBV5IR0FHZmHA+aV0n9ttI7VfqfMMBS6GDDaNF9a/+hKOtlpFZcL3MPS3721gBq32s7+HueqUQMUx0SAQXDsJo2f29uyOAGi5J6b2l1+uXTMgQ/fSxh2XbaMeorf1sSLUJbL2eGXSlYJWjdf/G93H1t1e9AQCGVRB58ybCk1r9YtL1r2/j8mij8XSDpN5k4dBovc3NfoGqZHY83KtvSBAL+LNExQxJMZIj5vXNN26Rf6GEqGo4zI7RUOqrj9QQa76xW+8Fs644pPBb9cu1d775xu7+KEm1CfPJ5TlTJ6pvqvuj9ta/EFgonCRGmTIIYiRf+TgYXbD54eb9S7k5aZW//AHm0uSpRgVsrR/egM9rBDs1f/qaLeevBgS9V0r3zTc271+YP7PBzWqZzGk/428br637FyhkaDX2ckuL7YqtHLHJdb68v5/NB5aWtSqrVGUsnr9MUt/+tbl/Q5Yujplw6Y/mm+7fuIO+oURH+KSXS1NVcaZymDTk6k842oovelSEPAa9En/5L4pfy7N7fQ9364c28te8sp2eam/qvVWAbry+jsu/vagfTZHSp6aGGKf9f0bG9q+9+ZcNVLU/u+VrMpsQMzfr/Gvz80TvjvG2hY22WkffjXWcejf+AO/OiJNffZHaAAAAAElFTkSuQmCC'
+  },
+  "xa_consult": {
+    name: '西安易仕程信息咨询有限公司',
+    taxId: '91610131MAKE5N3X53',
+    addr: '陕西省西安市高新区丈八一路1号汇鑫中心A座2407室',
+    account: '129921872810001',
+    bank: '招商银行（陕西自贸试验区西安高新科技支行）',
+    qr: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYgAAAGIAQAAAABzOEqLAAADg0lEQVR4nO1cy47kIAzEaP//l2tllw2M9rCQEZzKo0mTBCsS1ab8ShvaofRThSaNfekHcynSuLlWf1ozjuCjODQ0o9nEhx8MY5bwuIxHi7U3AmNAM2swrMD4sWYJj33p3zTM6ttvAYbDEZ8OhJUBGWcJj9v2UVImMU3GyjJs0r7weIVHyx1qWITvWmE0v3uGNA7xQAyHXaQ9hHE4leR9UEOruy+9HQtqJ8J//iiA8Li8X6Etu1PsTbFLJb2PY/v8jC6Nbenp6Vosenq3fhIXwngyKrGpcShdGttiGfHRNiLsqEBjiDOI1Vire50/QPbImK9CvyKOyR3NZ4s/HthHW/YlOrkzOnf/N4P0uKbd5zoey8ZVzm2MK3uVJxb3hMe+9O98Dobjfo1s7lmTPKVpmKe2hMd1/kB8FJXEOX6wyGAW+InsY1/6Nw0kaSxhxsIjkUe0MA6/JDz2pX/UgPODGwWjjlj99HHpeLUkD/HHA/6AD9yTIhRR/siYPMOR6QDLPl7kd61CPsaDNgLESL+HgYCpE/m79/1d88FCHESFsQeJhDPk7z7yr/AjoT4C8vS31slN/tV1+7AKxEe9nH4W4/Gl2wEfn9Glcb5WNuzD2SOjwMpfES0W0LW6+9I/acAHxRbu62bRnC6Xo0KwOBAet/kDy9kScfyb4YWL8NiX/knDYp3DApJH3B7IILMi0nIXEx6v4g9k61VGG7l7xQQw6fjtGV0ah/1wqCp5/gdZZGsJ6b3RMdbqPvkmWuxLsxXOHamRtmImHpXB0rf9ej81sjZYtJ2Zk+qxHl2LTfndR/4umJ2KxpIwjerZXZGgyD72pX/RQER607eNqI+pd47YioU0FeFxO1+CYm4mSEa7aL500H6+d9CPn9GlcRp/GBHJrBXTuTOrSNiMgGl1b+9XyAphsMUsndPRzSjEGCDq2/4gHjQfBBJVlM2SIfO7vGp1RfZx298FUyT56kd5W0uNKpPu+PiMLo3D/naMeLywmC3UI3llNBut7qP3P5AlwUy/J0xZPEd1+Cq/++r9WptUUvUOZnqHmZjs42V/O8bWlbemlbSaKvs4kf4bDWMXYtZplx8F4G2on7o91QBfjaLjS58rsygj2Wvyd5/072JWAFl5GlHij2Ck+UX5V0/iwZZlqPG7Gfn6TWLSYr9S/urZ+zjb0venpkhjX/rBXIo09uV8rf4CHPz3mBJwfp8AAAAASUVORK5CYII='
+  },
+  "wh_ysc": {
+    name: '武汉易仕程文化传媒有限公司',
+    taxId: '91420104MACMUWWU9B',
+    addr: '武汉市硚口区宝丰二路74号C354',
+    account: '17082901040018988',
+    bank: '中国农业银行股份有限公司武汉姑嫂树支行',
+    qr: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYgAAAGIAQAAAABzOEqLAAADZ0lEQVR4nO1b0Y7kMAiD6P7/l30CTJLVSae2q+TJzO5o2km0UrxgMNRhL2283WDa8dzGi7Vl2nHyrP6YeX2Cp6t4fXCLt3Iehzl6lfA4jYcRh4ICiU+cf6JBkLBWyT9O42Gep91IBBRxN+Fo77FeJTxe2PjNDu+gRGcIdymvmDEtTP7x3MZvdiBjFswDiHSMROQnGiY8zscrzMuKVY5kcw9Y1rf4+jeGdjw3rOP+/6sM0Ok+t2FvzZdvdIobvL2nvNuSMOHx3Ia9NuT/fhx5HnudPRFAWBM8aqH844WNbzsQWW7B4dtlXHiAQg+B8t0bfI7KoYrDM05VrKqSsFJecDkUry7lV+hUKoAph0AUJPCs2TErQvHHcT73+LT0qpRLsO5Ofjf5xzsbX3Z4MTcDVZeBURWGpzDL8vQb6SWX8l3fubzoI9XFTTBBoqJ4dRwPT5bIV2uGK2AxXhk1X/H5+XgFekLReupX6S3MuCqW2fQU8fnx/Mq62cEAlhyy2iKMW17BTHic5w+fdDHT3LxNPqkv8PVvDO14bqBMEslUSSJLQ+H1qs4hveQKn4O1xiz72prUPS/E59f4A92bLeLYdZMkeMz+oaLP6fzKyOXZOp961uypl7jo0hPHl9P94B/ejfLKq9boAn/XdAPkHxfyK+fnVQGuRKsqkDnnoHz3Qj/KMm/acqrZfOKS+RMm/jje/0CTB1WS1nkZtnjT5B939F0Ui0efI6zFEw6ZdFMKlFTkH3f4A1MjoZpYzsJ3owQsveR8PWgdp8jlnfWW6LuPZ7n09ivzDF5cMdOqVkq66Ij2VEUuxasL9aDXYDsrkFmn171icVRXXfxxgz/Q3XKq6v0Vm4KMWa759pv5FVrpzejEZz5IIpzrzfvKr87rV0iCyKS3j56usQ0AQf7x1sanHU4BNy15vVlkqbw+MZF/HJ/fxT6f+3MacU22G9cKj1vz7egSsLWRebVPywmP03xeNpWSJbLX8zjlM95PEwqPa8/XgrNYpO6qN2YmbMXvwuPC8x9G/mhJke//EgjEH9eer7XMoBY+lFCiTAdfildX5hloLMVrdnqbzNqHeE3x6ryeiP15tUqpplrCbpX3QyLC4/w8Q1rS95SvWi2Zc9ROlhcel+qPhzaeLpymHc9tvFhbph3P7f1Z/QWREQ2eA6W47gAAAABJRU5ErkJggg=='
+  },
+  "hn_sdfz": {
+    name: '湖南仕达方舟教育科技有限公司',
+    taxId: '91430103MAK11PYW6E',
+    addr: '湖南省长沙市天心区雀园路568号创谷产业园1栋511-516室',
+    account: '431503888015003298161',
+    bank: '交行长沙九峰支行',
+    qr: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYgAAAGIAQAAAABzOEqLAAADkklEQVR4nO1bAY7jMAgE1P9/mRPM4HhPJ12rXiOO2rvbOo1RlxA8DBB1eXHYqwJyJJ4f9sJajCPxyWv1EFHMwlE03/Aah6556DGrVcceH7aH5MXXuPywCY/TBGESlTBLrTr2+LQ9pNwifcAVFiGwqK+Z5OzY4/lh70m4i7t6uEm6C3wl3UT+1Xc8Ney7/YMjNij8YpYOERCi/fUYZQ9fh4kZ3LHCEBo+E+gha1VPPWyIhCSG5+QvPxjuPfWwIRJ6+QZgnJjOOPcPy+yG/8q+VkICwznJqGodY4dK39jXeE89bBaeO8mfwjHgKQCT8g7PDw4fvMMevnapYh7JA2mliLQ0zRHret5XNkTiwbgJL2kDQMeGGOQhjkU99bBhEqoZ3JL7hQUybZUmQhCmscK76zEkn+iZoYrLH0msH7hRBNHJ2XvqYXMkHFc6jrAlxbVflsgEFqAeXKWtHqPw3HHl15bFOEsdqRM//Fxu5IPK0LbMcp3eYy9Ju/S8r2yOhCZqgw2WZzCziGgrNixZed62esyRUOIH6yCZTkzCkbiR/EOKnHTWY4CEklxUiaPo+arcFrZIbWU99bBR+SvHFC+RpLrOrfwvxslf3ZLf1UXK4RJV/7i8RLCDdb2vbI6E7tgB6GawC8+5Crh68ld38A9d7AJeUH5R1INUUbz3fTWsPiiFJQxveW5jgpIFkJ562BwJB8lYxUGN+jnJCIxCAPEk6231mCKhtTfBN1bcu/0BRYKYNNZjioRffYgAdID6KkAViujJJ95jQWf1b+eEZIIVAEtmed/4jteGfbOEMmFYKZEMc1mAqvjKc6qt9Zgi4Ykd2UwN0yTVIPsArqRJyAzb6jFFQkk2ojS4qAfjLTY47K1YbfUY08+gW89ujNVFXYURJBUVyN9TD5vVv+uLb1xcHV28CKzkalfsqYcNknDksBjPxohCFBsb6mkQLQP11WOChF75W/YfXt6ADYpbldT5nnrYEAlhuopd7ITyqx5S6d4Yefbkr+6of8RYz27GwVb2uLoZJN573lc27/laB4DkrpRtDci+cyjz8E31sHnP1yohYu9rR8I9aKLX87c99bBhz3/4xvi2UysUjhGF9YMfN1rQ8bqewGHK5Kej2Hvf8dSwr5V4/P4BEYShLml5dfOe/eqG+ErZMnqB907I94x74/vKRj5fKwCJ4iJVyF1ERA5+3Mc//uv7yo7E08OeXyrfLvELr4oGj7wTHh4AAAAASUVORK5CYII='
+  }
+};
+
+var PRODUCT_TO_COMPANY = {
+  "sx_ysc": { products: ["研翼","保研","竞赛","专利","实习","论文","雅思","松果计划"] },
+  "xa_brand": { products: ["托管","绩点一对一","四六级","计算机","录播课"] },
+  "xa_consult": { products: ["考研全科班","考研单科班","考研专业课","考研管家班","考研"] },
+  "wh_ysc": { products: ["大一云伴学","班干部竞选"] },
+  "hn_sdfz": { products: ["就业领跑","就业直通车","央国企","就业"] }
+};
+
+function matchPaymentCompany(classType) {
+  if (!classType || classType === '—' || classType === '') return null;
+  var best = null, bestScore = 0;
+  for (var key in PRODUCT_TO_COMPANY) {
+    var products = PRODUCT_TO_COMPANY[key].products;
+    for (var i = 0; i < products.length; i++) {
+      if (classType.indexOf(products[i]) !== -1) {
+        var score = products[i].length;
+        if (score > bestScore) { bestScore = score; best = key; }
+      }
+    }
+  }
+  return best;
+}
+
+function showPaymentInfo(classType) {
+  var cid = matchPaymentCompany(classType);
+  if (!cid || !PAYMENT_QR[cid]) {
+    showToast('未匹配到签署机构，请在"报名班型"中填写具体产品名称');
+    return;
+  }
+  var c = PAYMENT_QR[cid];
+  var modal = document.getElementById('paymentModal');
+  var body = document.getElementById('paymentModalBody');
+  var html = '';
+  html += '<div style="display:flex;gap:20px;align-items:flex-start">';
+  html += '<div style="flex-shrink:0;text-align:center">';
+  html += '<img src="' + c.qr + '" style="width:200px;height:200px;border:2px solid #eee;border-radius:12px;display:block">';
+  html += '<div style="font-size:12px;color:#667085;margin-top:6px">扫码转账</div>';
+  html += '</div>';
+  html += '<div style="flex:1;min-width:0">';
+  html += '<div style="font-size:18px;font-weight:900;color:#f3981c;margin-bottom:10px">💰 ' + htmlEncode(c.name) + '</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.7">';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;width:70px;vertical-align:top">税号</td><td style="padding:5px 6px;color:#102033">' + htmlEncode(c.taxId) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">开户行</td><td style="padding:5px 6px;color:#102033">' + htmlEncode(c.bank) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">账号</td><td style="padding:5px 6px;color:#b91c1c;font-weight:900;font-size:15px;letter-spacing:1px">' + htmlEncode(c.account) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">地址</td><td style="padding:5px 6px;color:#102033;font-size:12.5px">' + htmlEncode(c.addr) + '</td></tr>';
+  html += '</table>';
+  html += '</div></div>';
+  html += '<div style="background:#f0f9ff;border:1px solid #b9e6fe;border-radius:12px;padding:12px;text-align:center;color:#075985;font-weight:800;font-size:13px;margin-top:14px">';
+  html += '📌 请将此收款码及账户信息转给家长/学生进行对公转账';
+  html += '</div>';
+  body.innerHTML = html;
+  modal.style.display = 'flex';
+}
+</script>
+
+<!-- 收款码弹窗 -->
+<div class="modalMask" id="paymentModal" style="z-index:9999">
+  <div class="modalBox" style="width:560px">
+    <div class="modalTop">
+      <h2>💰 协议签署 &amp; 收款二维码</h2>
+      <button class="xbtn" onclick="closePaymentModal()">关闭</button>
+    </div>
+    <div id="paymentModalBody"></div>
+    <div style="text-align:center;padding-top:12px;border-top:1px solid #e6f0f7;margin-top:12px">
+      <button class="btn btn-orange" onclick="closePaymentModal()" style="width:100%">我知道了</button>
+    </div>
+  </div>
+</div>
+<script>
+function closePaymentModal() {
+  document.getElementById("paymentModal").style.display = "none";
+}
 </script>
 </body>
 </html>
