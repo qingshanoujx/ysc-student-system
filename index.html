@@ -240,6 +240,31 @@ function downloadPDF() {
     showToast('请使用浏览器打印功能 (Ctrl+P) -> 另存为PDF');
   }
 }
+
+function dl(blob, name) {
+  try {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    setTimeout(function() {
+      a.click();
+      setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    }, 100);
+  } catch(e) {
+    console.warn('Download fallback:', e);
+    try {
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        window.open(evt.target.result, '_blank');
+      };
+      reader.readAsDataURL(blob);
+    } catch(e2) {
+      showToast('下载失败，请尝试右键 -> 打印 -> 另存为PDF');
+    }
+  }
+}
 function fillSample(){clearForm();$('name').value='张同学';$('classType').value='大一托管B班';$('amount').value='12800';$('grade').value='26级（大一）';setTimeout(()=>{$('originProvince').value='陕西';updateOriginCity();$('originCity').value='西安市';updateOriginCounty();$('originCounty').value='市辖区'},0);$('school').value='西安理工大学';$('major').value='经济学';autoFillJob();$('agreement').value='未';$('startDate').value='2026.6.16';$('installmentStatus').value='否';$('rankStatus').value='专业前30%';$('weakSubject').value='英语 / 高数';$('cetStatus').value='四级未过';$('cadreStatus').value='正在争取';$('targetRegion').value='西安 / 长三角';$('priority').value='重点跟进';$('firstContactTime').value='24小时内';['公务员','央国企','高校行政'].forEach(v=>document.querySelector(`input[name="need"][value="${v}"]`).checked=true);['保研推免/夏令营','提绩点','四六级','优质实习'].forEach(v=>document.querySelector(`input[name="problem"][value="${v}"]`).checked=true);['学生协议','学员信息表','付款截图'].forEach(v=>document.querySelector(`input[name="file"][value="${v}"]`).checked=true);$('judge').value='家长希望孩子上大学后关键节点有人提醒，学生可以配合，但不喜欢被监督。首接先讲陪伴和任务清单。';$('specialNote').value='协议未签，需先确认；家长比较焦虑，首次沟通要先稳预期。';generate()}
 function clearForm(){document.querySelectorAll('input[type=text],textarea').forEach(i=>i.value='');document.querySelectorAll('input[type=checkbox]').forEach(i=>i.checked=false);document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);files=[];renderFiles();initOriginSelects();$('preview').innerHTML='<div class="empty"><div style="font-size:58px">🤝</div><h3>等待生成对接表</h3><p>左侧按4步填写，右侧生成学管师可直接接手的对接表。</p></div>'}
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1600)}
