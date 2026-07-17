@@ -202,30 +202,44 @@ ${miss.length?`<div class="warn">待确认信息：${esc(miss.join('；'))}</div
 <h3>五、学管师确认栏</h3><table><tr><td>学生协议</td><td>□已收 □未收</td><td>学员信息表</td><td>□已收 □未收</td></tr><tr><td>首次联系</td><td>□已完成 □待完成</td><td>正式建档</td><td>□已完成 □待完成</td></tr><tr><td>首月任务</td><td>□已生成 □待生成</td><td>家长反馈</td><td>□已同步 □待同步</td></tr></table>
 </div>`;$('preview').innerHTML=html;toast('已生成');setTimeout(function(){showPaymentInfo(d.classType)},500)}
 function safeFileName(){const x=data();return `${x.name}_${x.school}_对接表`.replace(/[\\/:*?"<>|]/g,'_')}
-function downloadWord(){if(!$('paper'))generate();saveReportRecord('下载Word');let content=`<html><head><meta charset="utf-8"><style>body{font-family:Microsoft YaHei}table{border-collapse:collapse;width:100%}td{border:1px solid #999;padding:8px;vertical-align:top}td:first-child{font-weight:bold;background:#fff4e5}h3{color:#075985}
-
-/* 强制账号密码登录 */
-.forceLoginOverlay{position:fixed;inset:0;background:linear-gradient(180deg,#f7fcff,#eaf6fb);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px}
-.forceLoginCard{width:430px;max-width:100%;background:#fff;border:1px solid #d8e8f2;border-radius:22px;box-shadow:0 20px 50px rgba(16,24,40,.18);padding:30px}
-.forceLoginCard h2{margin:0 0 8px;font-size:26px;color:#102033}
-.forceLoginCard p{margin:0 0 18px;color:#667085;font-weight:700;line-height:1.55}
-.forceLoginCard input{width:100%;border:1px solid #d1dbe8;border-radius:14px;padding:14px 15px;font-size:16px;margin:8px 0}
-.forceLoginMsg{color:#b42318;font-weight:900;min-height:24px;margin-top:8px}
-.forceLoginLocked .header,.forceLoginLocked main{display:none!important}
-.userGrid{display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:8px;align-items:center}
-.userGrid input,.userGrid select{border:1px solid #d1dbe8;border-radius:10px;padding:10px;font-size:14px}
-.modalMask{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px}
-.modalBox{width:980px;max-width:100%;max-height:88vh;overflow:auto;background:white;border-radius:20px;border:1px solid #d8e8f2;box-shadow:0 20px 60px rgba(15,23,42,.25);padding:22px}
-.modalTop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.modalTop h2{margin:0;font-size:22px}.xbtn{border:0;background:#fee4e2;color:#b42318;border-radius:10px;font-weight:900;padding:8px 12px;cursor:pointer}
-.miniBtn{border:1px solid #c7e5f3;background:#eff9ff;color:#075985;border-radius:10px;padding:8px 10px;font-weight:900;cursor:pointer}.dangerBtn{border:1px solid #fecaca;background:#fee2e2;color:#b91c1c}
-.recordList{display:grid;gap:10px}.recordItem{border:1px solid #d8e8f2;border-radius:14px;padding:12px;background:#fbfdff}.recordItem b{font-size:16px}.recordItem small{display:block;color:#667085;margin-top:4px;line-height:1.5}.recordActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-
-</style></head><body>
-<div class="modalMask" id="historyModal"><div class="modalBox"><div class="modalTop"><h2>后台报告记录</h2><button class="xbtn" onclick="closeModal('historyModal')">关闭</button></div><div id="historyList" class="recordList"></div></div></div>
-<div class="modalMask" id="accountModal"><div class="modalBox"><div class="modalTop"><h2>授权账号管理</h2><button class="xbtn" onclick="closeModal('accountModal')">关闭</button></div><div id="accountList"></div></div></div>
-${$('paper').innerHTML}</body></html>`;let blob=new Blob(['\ufeff',content],{type:'application/msword'});dl(blob,`${safeFileName()}.doc`)}
-function downloadPDF(){if(!$('paper'))generate();saveReportRecord('打印/PDF');document.title=safeFileName();window.print()}
-function dl(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+function downloadWord() {
+  if (!$('paper')) generate();
+  saveReportRecord('下载Word');
+  // Clean paper content for export
+  var paperEl = document.getElementById('paper');
+  var content = '<!DOCTYPE html><html><head><meta charset="utf-8">';
+  content += '<style>body{font-family:Microsoft YaHei,sans-serif;padding:30px}';
+  content += 'table{border-collapse:collapse;width:100%;margin:14px 0}';
+  content += 'td,th{border:1px solid #999;padding:8px;vertical-align:top;font-size:14px}';
+  content += 'td:first-child{font-weight:bold;background:#fff4e5;width:140px}';
+  content += 'h2{color:#f3981c;font-size:24px;margin-bottom:4px}';
+  content += 'h3{color:#075985;border-left:5px solid #f3981c;padding-left:10px;margin:24px 0 10px}';
+  content += '.focus{background:#f0f9ff;border:1px solid #b9e6fe;border-radius:14px;padding:14px;margin:12px 0 18px;line-height:1.7}';
+  content += '.warn{background:#fff8ed;border:1px solid #ffd8a8;border-radius:14px;padding:12px;margin:12px 0 18px;color:#92400e;font-weight:800}';
+  content += '.sub{color:#667085;font-weight:700;margin-bottom:18px}';
+  content += 'ul{margin:8px 0 18px;padding-left:20px}';
+  content += 'li{margin:6px 0;line-height:1.55}';
+  content += '.imggrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}';
+  content += '.attach{border:1px solid #d7e6f0;border-radius:12px;padding:10px}';
+  content += '.attach img{width:100%;max-height:340px;object-fit:contain}';
+  content += '</style></head><body>';
+  content += paperEl.innerHTML;
+  content += '</body></html>';
+  
+  var blob = new Blob(['\ufeff', content], {type: 'application/msword'});
+  dl(blob, safeFileName() + '.doc');
+}
+function downloadPDF() {
+  if (!$('paper')) generate();
+  saveReportRecord('打印/PDF');
+  document.title = safeFileName();
+  // Try print first, fallback to html2canvas if available
+  try {
+    window.print();
+  } catch(e) {
+    showToast('请使用浏览器打印功能 (Ctrl+P) -> 另存为PDF');
+  }
+}
 function fillSample(){clearForm();$('name').value='张同学';$('classType').value='大一托管B班';$('amount').value='12800';$('grade').value='26级（大一）';setTimeout(()=>{$('originProvince').value='陕西';updateOriginCity();$('originCity').value='西安市';updateOriginCounty();$('originCounty').value='市辖区'},0);$('school').value='西安理工大学';$('major').value='经济学';autoFillJob();$('agreement').value='未';$('startDate').value='2026.6.16';$('installmentStatus').value='否';$('rankStatus').value='专业前30%';$('weakSubject').value='英语 / 高数';$('cetStatus').value='四级未过';$('cadreStatus').value='正在争取';$('targetRegion').value='西安 / 长三角';$('priority').value='重点跟进';$('firstContactTime').value='24小时内';['公务员','央国企','高校行政'].forEach(v=>document.querySelector(`input[name="need"][value="${v}"]`).checked=true);['保研推免/夏令营','提绩点','四六级','优质实习'].forEach(v=>document.querySelector(`input[name="problem"][value="${v}"]`).checked=true);['学生协议','学员信息表','付款截图'].forEach(v=>document.querySelector(`input[name="file"][value="${v}"]`).checked=true);$('judge').value='家长希望孩子上大学后关键节点有人提醒，学生可以配合，但不喜欢被监督。首接先讲陪伴和任务清单。';$('specialNote').value='协议未签，需先确认；家长比较焦虑，首次沟通要先稳预期。';generate()}
 function clearForm(){document.querySelectorAll('input[type=text],textarea').forEach(i=>i.value='');document.querySelectorAll('input[type=checkbox]').forEach(i=>i.checked=false);document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);files=[];renderFiles();initOriginSelects();$('preview').innerHTML='<div class="empty"><div style="font-size:58px">🤝</div><h3>等待生成对接表</h3><p>左侧按4步填写，右侧生成学管师可直接接手的对接表。</p></div>'}
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1600)}
@@ -406,12 +420,12 @@ function showPaymentInfo(classType) {
   html += '<div style="font-size:12px;color:#667085;margin-top:6px">扫码转账</div>';
   html += '</div>';
   html += '<div style="flex:1;min-width:0">';
-  html += '<div style="font-size:18px;font-weight:900;color:#f3981c;margin-bottom:10px">💰 ' + htmlEncode(c.name) + '</div>';
+  html += '<div style="font-size:18px;font-weight:900;color:#f3981c;margin-bottom:10px">💰 ' + esc(c.name) + '</div>';
   html += '<table style="width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.7">';
-  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;width:70px;vertical-align:top">税号</td><td style="padding:5px 6px;color:#102033">' + htmlEncode(c.taxId) + '</td></tr>';
-  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">开户行</td><td style="padding:5px 6px;color:#102033">' + htmlEncode(c.bank) + '</td></tr>';
-  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">账号</td><td style="padding:5px 6px;color:#b91c1c;font-weight:900;font-size:15px;letter-spacing:1px">' + htmlEncode(c.account) + '</td></tr>';
-  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">地址</td><td style="padding:5px 6px;color:#102033;font-size:12.5px">' + htmlEncode(c.addr) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;width:70px;vertical-align:top">税号</td><td style="padding:5px 6px;color:#102033">' + esc(c.taxId) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">开户行</td><td style="padding:5px 6px;color:#102033">' + esc(c.bank) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">账号</td><td style="padding:5px 6px;color:#b91c1c;font-weight:900;font-size:15px;letter-spacing:1px">' + esc(c.account) + '</td></tr>';
+  html += '<tr><td style="padding:5px 6px;font-weight:900;color:#667085;vertical-align:top">地址</td><td style="padding:5px 6px;color:#102033;font-size:12.5px">' + esc(c.addr) + '</td></tr>';
   html += '</table>';
   html += '</div></div>';
   html += '<div style="background:#f0f9ff;border:1px solid #b9e6fe;border-radius:12px;padding:12px;text-align:center;color:#075985;font-weight:800;font-size:13px;margin-top:14px">';
